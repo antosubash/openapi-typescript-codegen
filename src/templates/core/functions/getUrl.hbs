@@ -1,6 +1,6 @@
-const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
+const getUrl = async (config: OpenAPIConfig, options: ApiRequestOptions): Promise<string> => {
 	const encoder = config.ENCODE_PATH || encodeURI;
-
+	const base = await resolve(options, config.BASE);
 	const path = options.url
 		.replace('{api-version}', config.VERSION)
 		.replace(/{(.*?)}/g, (substring: string, group: string) => {
@@ -10,7 +10,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 			return substring;
 		});
 
-	const url = `${config.BASE}${path}`;
+	const url = `${base}${path}`;
 	if (options.query) {
 		return `${url}${getQueryString(options.query)}`;
 	}
